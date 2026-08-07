@@ -265,12 +265,25 @@ class PayrollControlF931(models.Model):
         self.env['payroll.control.f931.boleta'].create(list(datos.values()))
 
     def action_marcar_presentado(self):
+        """Cierra el control. Si no cuadra, exige que la diferencia esté explicada.
+
+        No alcanza con negarse: hay períodos que legítimamente no cuadran y se
+        presentan igual —una diferencia conocida, un concepto que se declara por
+        otra vía—. Lo que no puede pasar es que se cierren en silencio, así que
+        la salida es dejar la explicación escrita en Observaciones, que queda en
+        el registro y en el chatter.
+        """
         for c in self:
-            if not c.cuadra:
+            if not c.cuadra and not (c.nota or '').strip():
                 raise UserError(_(
                     'El control no cuadra: %s.\n\nSi la diferencia está explicada, '
                     'dejala anotada en Observaciones antes de marcarlo como '
                     'presentado.') % c.resumen)
+            if not c.cuadra:
+                c.message_post(body=_(
+                    'Marcado como presentado <b>sin cuadrar</b>: %s.<br/>'
+                    'Explicación registrada: %s'
+                ) % (c.resumen, c.nota))
             c.state = 'done'
 
     def action_volver_a_control(self):
