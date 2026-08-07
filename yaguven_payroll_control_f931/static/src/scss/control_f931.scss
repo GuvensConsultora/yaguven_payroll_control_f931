@@ -1,28 +1,38 @@
 // Alineación del bloque de control (la tabla sistema / F.931 / diferencia).
 //
-// Los campos del F.931 son editables, y el widget monetary de Odoo dibuja el
-// símbolo de moneda como un elemento separado del <input>. El input trae un
-// ancho propio bastante mayor que el número que contiene, así que el símbolo
-// queda flotando lejos del importe: se lee "$          28.199.026,14".
+// Los campos del F.931 son editables, y el widget monetary de Odoo 18 no dibuja
+// el símbolo al lado del número: arma una capa absoluta que ocupa TODO el ancho
+// del campo, con el símbolo pegado a su borde izquierdo y un "ghost value"
+// invisible que reserva el espacio del importe:
 //
-// Acá se le da al input el ancho de su contenido y se lo alinea a la derecha,
-// para que el símbolo quede pegado al número como en las celdas de solo
-// lectura de la misma tabla.
+//   <div class="d-inline-flex w-100 position-relative">      <-- se estira
+//     <span class="o_input position-absolute d-flex w-100">  <-- dibuja el "$"
+//       <span>$</span>
+//       <span class="opacity-0 o_monetary_ghost_value">28.199.026,14</span>
+//     </span>
+//     <input class="o_input flex-grow-1">                    <-- el número real
+//   </div>
+//
+// Por eso achicar el <input> no sirve: el que se estira de punta a punta de la
+// celda es el div interno del widget, y con él la capa que lleva el símbolo. Se
+// lee "$                 28.199.026,14".
+//
+// El arreglo es sacarle el w-100 a ese div: al tomar el ancho de su contenido,
+// la capa absoluta (que es 100% del div) se achica con él y el símbolo queda
+// pegado al importe, igual que en las celdas de solo lectura de la misma tabla.
 
 .o_control_f931_num {
-    .o_field_monetary,
-    .o_field_integer {
-        input {
-            width: 9rem;
-            max-width: 9rem;
-            text-align: right;
-        }
+    // el contenedor interno del widget deja de ocupar toda la celda
+    .o_field_monetary > div,
+    .o_field_integer > div {
+        width: auto !important;
     }
 
-    // el símbolo va inmediatamente antes del importe, sin el hueco que deja
-    // el input al estirarse
-    .o_field_monetary > span:first-child {
-        margin-right: 0.15rem;
+    .o_field_monetary input,
+    .o_field_integer input {
+        width: 9rem;
+        max-width: 9rem;
+        text-align: right;
     }
 
     // la cantidad de empleados es un entero: no necesita tanto ancho
