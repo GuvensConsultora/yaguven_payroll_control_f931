@@ -52,7 +52,15 @@
                             <tr>
                                 <td><b>Remuneraciones</b></td>
                                 <td class="text-end"><field name="remuneraciones" nolabel="1" readonly="1"/></td>
-                                <td class="text-end"><field name="f931_remuneraciones" nolabel="1"/></td>
+                                <!-- El campo editable va dentro de un inline-flex: el widget
+                                     monetary renderiza el simbolo aparte del input, y si el
+                                     contenedor ocupa toda la celda el flex los separa hasta los
+                                     bordes ("$" a la izquierda, el numero a la derecha). -->
+                                <td class="text-end">
+                                    <div class="d-inline-flex align-items-center">
+                                        <field name="f931_remuneraciones" nolabel="1"/>
+                                    </div>
+                                </td>
                                 <td class="text-end"><field name="dif_remuneraciones" nolabel="1" readonly="1"
                                            decoration-danger="dif_remuneraciones &gt;= 1 or dif_remuneraciones &lt;= -1"
                                            decoration-success="dif_remuneraciones &lt; 1 and dif_remuneraciones &gt; -1"/></td>
@@ -61,7 +69,11 @@
                                 <td><b>Aportes (301 + 302)</b></td>
                                 <td class="text-end"><field name="aportes_total" nolabel="1" readonly="1"/></td>
                                 <td class="text-end">
-                                    <field name="f931_301" nolabel="1"/> + <field name="f931_302" nolabel="1"/>
+                                    <div class="d-inline-flex align-items-center gap-1">
+                                        <field name="f931_301" nolabel="1"/>
+                                        <span class="mx-1">+</span>
+                                        <field name="f931_302" nolabel="1"/>
+                                    </div>
                                 </td>
                                 <td class="text-end"><field name="dif_aportes" nolabel="1" readonly="1"
                                            decoration-danger="dif_aportes &gt;= 1 or dif_aportes &lt;= -1"
@@ -70,7 +82,11 @@
                             <tr>
                                 <td><b>Empleados</b></td>
                                 <td class="text-end"><field name="empleados" nolabel="1" readonly="1"/></td>
-                                <td class="text-end"><field name="f931_empleados" nolabel="1"/></td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex align-items-center">
+                                        <field name="f931_empleados" nolabel="1"/>
+                                    </div>
+                                </td>
                                 <td class="text-end"><field name="dif_empleados" nolabel="1" readonly="1"
                                            decoration-danger="dif_empleados != 0"
                                            decoration-success="dif_empleados == 0"/></td>
