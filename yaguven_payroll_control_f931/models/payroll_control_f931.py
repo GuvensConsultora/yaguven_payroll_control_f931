@@ -29,6 +29,9 @@ class PayrollControlF931(models.Model):
     """
     _name = 'payroll.control.f931'
     _description = 'Control de liquidación contra el F.931'
+    # el chatter deja asentado quién marcó el control como presentado y cuándo,
+    # que en una declaración jurada es parte del control mismo
+    _inherit = ['mail.thread']
     _order = 'anio desc, mes desc'
     _rec_name = 'display_name'
 
@@ -45,7 +48,7 @@ class PayrollControlF931(models.Model):
                                  default=lambda s: s.env.company)
     state = fields.Selection(
         [('draft', 'En control'), ('done', 'Presentado')],
-        'Estado', default='draft', required=True,
+        'Estado', default='draft', required=True, tracking=True,
     )
     payslip_run_ids = fields.Many2many(
         'hr.payslip.run', string='Liquidaciones del período',
