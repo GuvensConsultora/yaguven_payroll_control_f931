@@ -54,8 +54,8 @@
                                 <td class="text-end"><field name="remuneraciones" nolabel="1" readonly="1"/></td>
                                 <td class="text-end"><field name="f931_remuneraciones" nolabel="1"/></td>
                                 <td class="text-end"><field name="dif_remuneraciones" nolabel="1" readonly="1"
-                                           decoration-danger="abs(dif_remuneraciones) &gt;= 1"
-                                           decoration-success="abs(dif_remuneraciones) &lt; 1"/></td>
+                                           decoration-danger="dif_remuneraciones &gt;= 1 or dif_remuneraciones &lt;= -1"
+                                           decoration-success="dif_remuneraciones &lt; 1 and dif_remuneraciones &gt; -1"/></td>
                             </tr>
                             <tr>
                                 <td><b>Aportes (301 + 302)</b></td>
@@ -64,8 +64,8 @@
                                     <field name="f931_301" nolabel="1"/> + <field name="f931_302" nolabel="1"/>
                                 </td>
                                 <td class="text-end"><field name="dif_aportes" nolabel="1" readonly="1"
-                                           decoration-danger="abs(dif_aportes) &gt;= 1"
-                                           decoration-success="abs(dif_aportes) &lt; 1"/></td>
+                                           decoration-danger="dif_aportes &gt;= 1 or dif_aportes &lt;= -1"
+                                           decoration-success="dif_aportes &lt; 1 and dif_aportes &gt; -1"/></td>
                             </tr>
                             <tr>
                                 <td><b>Empleados</b></td>

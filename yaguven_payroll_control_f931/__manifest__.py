@@ -1,6 +1,6 @@
 {
     'name': 'Yagüven - Control del F.931',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.0.1',
     'summary': 'Control de la liquidación contra el F.931, antes de presentarlo',
     'description': '''
 Control del F.931
