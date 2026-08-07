@@ -28,16 +28,21 @@
         width: auto !important;
     }
 
+    // Con el div ya achicado, el hueco que queda esta DENTRO del input: mide
+    // 9rem y el importe ocupa bastante menos, alineado a la derecha. field-sizing
+    // le da el ancho de su contenido; donde no este soportado queda el max-width,
+    // que es el comportamiento anterior y sigue siendo legible.
     .o_field_monetary input,
     .o_field_integer input {
-        width: 9rem;
+        field-sizing: content;
+        min-width: 5rem;
         max-width: 9rem;
         text-align: right;
     }
 
     // la cantidad de empleados es un entero: no necesita tanto ancho
     .o_field_integer input {
-        width: 4.5rem;
+        min-width: 3rem;
         max-width: 4.5rem;
     }
 }
