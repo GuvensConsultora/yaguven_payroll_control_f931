@@ -1,0 +1,33 @@
+// Alineación del bloque de control (la tabla sistema / F.931 / diferencia).
+//
+// Los campos del F.931 son editables, y el widget monetary de Odoo dibuja el
+// símbolo de moneda como un elemento separado del <input>. El input trae un
+// ancho propio bastante mayor que el número que contiene, así que el símbolo
+// queda flotando lejos del importe: se lee "$          28.199.026,14".
+//
+// Acá se le da al input el ancho de su contenido y se lo alinea a la derecha,
+// para que el símbolo quede pegado al número como en las celdas de solo
+// lectura de la misma tabla.
+
+.o_control_f931_num {
+    .o_field_monetary,
+    .o_field_integer {
+        input {
+            width: 9rem;
+            max-width: 9rem;
+            text-align: right;
+        }
+    }
+
+    // el símbolo va inmediatamente antes del importe, sin el hueco que deja
+    // el input al estirarse
+    .o_field_monetary > span:first-child {
+        margin-right: 0.15rem;
+    }
+
+    // la cantidad de empleados es un entero: no necesita tanto ancho
+    .o_field_integer input {
+        width: 4.5rem;
+        max-width: 4.5rem;
+    }
+}

@@ -1,6 +1,6 @@
 {
     'name': 'Yagüven - Control del F.931',
-    'version': '18.0.1.2.0',
+    'version': '18.0.1.3.0',
     'summary': 'Control de la liquidación contra el F.931, antes de presentarlo',
     'description': '''
 Control del F.931
@@ -50,6 +50,11 @@ Detalles que evitan errores conocidos
         'security/ir.model.access.csv',
         'views/payroll_control_f931_views.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'yaguven_payroll_control_f931/static/src/scss/control_f931.scss',
+        ],
+    },
     'installable': True,
     'auto_install': False,
     'application': False,
