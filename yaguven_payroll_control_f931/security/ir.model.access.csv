@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_control_f931,payroll.control.f931,model_payroll_control_f931,hr_payroll.group_hr_payroll_user,1,1,1,1
+access_control_f931_empleado,payroll.control.f931.empleado,model_payroll_control_f931_empleado,hr_payroll.group_hr_payroll_user,1,1,1,1
+access_control_f931_concepto,payroll.control.f931.concepto,model_payroll_control_f931_concepto,hr_payroll.group_hr_payroll_user,1,1,1,1
+access_control_f931_boleta,payroll.control.f931.boleta,model_payroll_control_f931_boleta,hr_payroll.group_hr_payroll_user,1,1,1,1

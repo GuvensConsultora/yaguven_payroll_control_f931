@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_control_f931_form" model="ir.ui.view">
+        <field name="name">payroll.control.f931.form</field>
+        <field name="model">payroll.control.f931</field>
+        <field name="arch" type="xml">
+            <form string="Control del F.931">
+                <header>
+                    <button name="action_recalcular" string="Recalcular"
+                            type="object" class="btn-primary"/>
+                    <button name="action_marcar_presentado" string="Marcar como presentado"
+                            type="object" invisible="state == 'done'"/>
+                    <button name="action_volver_a_control" string="Volver a control"
+                            type="object" invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="display_name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="mes"/>
+                            <field name="anio"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="payslip_run_ids" widget="many2many_tags"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <!-- El control: lo que dice el sistema, lo que dice el
+                         formulario, y la diferencia. Es la pantalla con la que
+                         se decide si se presenta o no. -->
+                    <separator string="El control"/>
+                    <field name="resumen" readonly="1" nolabel="1"
+                           class="oe_inline" style="font-size:1.2em;font-weight:bold;"/>
+                    <field name="cuadra" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <table class="table table-sm o_group" style="margin-top:8px;">
+                        <thead>
+                            <tr>
+                                <th/>
+                                <th class="text-end">Según el sistema</th>
+                                <th class="text-end">Según el F.931</th>
+                                <th class="text-end">Diferencia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>Remuneraciones</b></td>
+                                <td class="text-end"><field name="remuneraciones" nolabel="1" readonly="1"/></td>
+                                <td class="text-end"><field name="f931_remuneraciones" nolabel="1"/></td>
+                                <td class="text-end"><field name="dif_remuneraciones" nolabel="1" readonly="1"
+                                           decoration-danger="abs(dif_remuneraciones) &gt;= 1"
+                                           decoration-success="abs(dif_remuneraciones) &lt; 1"/></td>
+                            </tr>
+                            <tr>
+                                <td><b>Aportes (301 + 302)</b></td>
+                                <td class="text-end"><field name="aportes_total" nolabel="1" readonly="1"/></td>
+                                <td class="text-end">
+                                    <field name="f931_301" nolabel="1"/> + <field name="f931_302" nolabel="1"/>
+                                </td>
+                                <td class="text-end"><field name="dif_aportes" nolabel="1" readonly="1"
+                                           decoration-danger="abs(dif_aportes) &gt;= 1"
+                                           decoration-success="abs(dif_aportes) &lt; 1"/></td>
+                            </tr>
+                            <tr>
+                                <td><b>Empleados</b></td>
+                                <td class="text-end"><field name="empleados" nolabel="1" readonly="1"/></td>
+                                <td class="text-end"><field name="f931_empleados" nolabel="1"/></td>
+                                <td class="text-end"><field name="dif_empleados" nolabel="1" readonly="1"
+                                           decoration-danger="dif_empleados != 0"
+                                           decoration-success="dif_empleados == 0"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <separator string="Otros totales del período"/>
+                    <group>
+                        <group>
+                            <field name="no_remunerativo"/>
+                            <field name="aportes_ss"/>
+                            <field name="aportes_os"/>
+                        </group>
+                        <group>
+                            <field name="retenciones"/>
+                            <field name="neto"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Por empleado" name="empleados">
+                            <field name="linea_empleado_ids">
+                                <list create="false" edit="false">
+                                    <field name="legajo"/>
+                                    <field name="employee_id"/>
+                                    <field name="remunerativo" sum="Haberes"/>
+                                    <field name="no_remunerativo" sum="No remunerativo"/>
+                                    <field name="retenciones" sum="Retenciones"/>
+                                    <field name="neto" sum="Neto"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Aportes por concepto" name="conceptos">
+                            <p class="text-muted">
+                                Cada concepto con el código del F.931 al que va. La suma
+                                de los 301 más los 302 es lo que tiene que coincidir
+                                con el formulario.
+                            </p>
+                            <field name="linea_concepto_ids">
+                                <list create="false" edit="false" default_order="destino, name">
+                                    <field name="destino"/>
+                                    <field name="name"/>
+                                    <field name="cantidad"/>
+                                    <field name="importe" sum="Total"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Boletas" name="boletas">
+                            <p class="text-muted">
+                                Cuota sindical y seguro de vida, separados por convenio:
+                                cada uno se paga por su lado.
+                            </p>
+                            <field name="linea_boleta_ids">
+                                <list create="false" edit="false" default_order="structure_type_id, name">
+                                    <field name="structure_type_id"/>
+                                    <field name="name"/>
+                                    <field name="cantidad"/>
+                                    <field name="importe" sum="Total"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Observaciones" name="nota">
+                            <field name="nota" placeholder="Si queda una diferencia explicada, anotarla acá antes de marcar el control como presentado."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_control_f931_list" model="ir.ui.view">
+        <field name="name">payroll.control.f931.list</field>
+        <field name="model">payroll.control.f931</field>
+        <field name="arch" type="xml">
+            <list string="Controles del F.931"
+                  decoration-success="cuadra"
+                  decoration-danger="not cuadra and state == 'done'">
+                <field name="display_name"/>
+                <field name="empleados"/>
+                <field name="remuneraciones" sum="Remuneraciones"/>
+                <field name="aportes_total" sum="Aportes"/>
+                <field name="neto" sum="Neto"/>
+                <field name="resumen"/>
+                <field name="cuadra" widget="boolean_toggle" readonly="1"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_control_f931_search" model="ir.ui.view">
+        <field name="name">payroll.control.f931.search</field>
+        <field name="model">payroll.control.f931</field>
+        <field name="arch" type="xml">
+            <search string="Controles del F.931">
+                <field name="anio"/>
+                <!-- No hay filtro por "cuadra": es un campo calculado al vuelo,
+                     no almacenado, y por eso no se puede buscar por él. Los
+                     totales se recalculan cada vez que se abre el control, que
+                     es lo que se quiere: si cambian los recibos, el control lo
+                     refleja sin que haya que recalcular nada a mano. En la
+                     lista se ve igual, por color y por el texto del resultado. -->
+                <filter name="en_control" string="En control"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="presentados" string="Presentados"
+                        domain="[('state', '=', 'done')]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="g_anio" string="Año" context="{'group_by': 'anio'}"/>
+                    <filter name="g_estado" string="Estado" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_control_f931" model="ir.actions.act_window">
+        <field name="name">Control del F.931</field>
+        <field name="res_model">payroll.control.f931</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_control_f931_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Todavía no hay controles cargados</p>
+            <p>
+                Es el control que se hace antes de presentar el F.931: se elige el
+                período, se aprieta <b>Recalcular</b> y se comparan los totales del
+                sistema contra los del formulario.
+            </p>
+            <p>
+                Los valores del formulario se cargan a mano a propósito: si se
+                tomaran del propio sistema, se estaría comparando Odoo contra Odoo
+                y el control no serviría para detectar un error de cálculo.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_control_f931"
+              name="Control del F.931"
+              parent="hr_payroll.menu_hr_payroll_report"
+              action="action_control_f931"
+              sequence="16"/>
+
+</odoo>
